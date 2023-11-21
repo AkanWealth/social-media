@@ -1,0 +1,20 @@
+/*
+  Warnings:
+
+  - Made the column `userId` on table `Account` required. This step will fail if there are existing NULL values in that column.
+
+*/
+-- DropForeignKey
+ALTER TABLE "Account" DROP CONSTRAINT "Account_userId_fkey";
+
+-- AlterTable
+ALTER TABLE "Account" ALTER COLUMN "userId" SET NOT NULL;
+
+-- AlterTable
+ALTER TABLE "Post" ADD COLUMN     "isExpired" BOOLEAN NOT NULL DEFAULT false;
+
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "verified" BOOLEAN NOT NULL DEFAULT true;
+
+-- AddForeignKey
+ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

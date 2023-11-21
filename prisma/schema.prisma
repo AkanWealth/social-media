@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int       @id @default(autoincrement())
+  username String    @unique
+  email    String    @unique
+  password String
+  accounts Account[]
+  likes    Like[]
+  comments Comment[]
+  posts    Post[]
+  verified Boolean   @default(false)
+}
+
+model Account {
+  id       Int    @id @default(autoincrement())
+  userId   Int
+  user     User   @relation(fields: [userId], references: [id])
+  password String
+}
+
+model Like {
+  id          Int     @id @default(autoincrement())
+  userId      Int?
+  postId      Int?
+  user        User?   @relation(fields: [userId], references: [id])
+  post        Post?   @relation(fields: [postId], references: [id])
+  isSuperlike Boolean
+}
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  userId    Int?
+  user      User?     @relation(fields: [userId], references: [id])
+  content   String
+  createdAt DateTime  @default(now())
+  expiresAt DateTime
+  isExpired Boolean   @default(false)
+  likes     Like[]
+  comments  Comment[]
+}
+
+model Comment {
+  id       Int     @id @default(autoincrement())
+  userId   Int
+  postId   Int
+  user     User    @relation(fields: [userId], references: [id])
+  post     Post    @relation(fields: [postId], references: [id])
+  content  String
+  verified Boolean
+}
